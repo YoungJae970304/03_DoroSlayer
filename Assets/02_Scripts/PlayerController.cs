@@ -20,6 +20,7 @@ public enum PlayerState
 
 public class PlayerController : MonoBehaviour
 {
+    // git test
     PlayerState playerState;
 
     Animator anim;
