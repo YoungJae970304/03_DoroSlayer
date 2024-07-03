@@ -28,7 +28,7 @@ public class PlayerController : MonoBehaviour
     BoxCollider2D boxCol;
 
     float speed = 1f;
-    float jumpForce = 300f;
+    float jumpForce = 250f;
     float lastMoveDir;
 
     bool isGrounded = true;
@@ -41,10 +41,11 @@ public class PlayerController : MonoBehaviour
         boxCol = GetComponent<BoxCollider2D>();
 
         playerState = PlayerState.Idle;
+        rig2d.velocity = Vector2.zero;
     }
 
     
-    void Update()
+    void FixedUpdate()
     {
         NowStateJudge();
 
@@ -86,32 +87,37 @@ public class PlayerController : MonoBehaviour
 
     void NowStateJudge()
     {
-        if (Input.GetAxis("Horizontal") != 0 && isGrounded)
-        {
-            playerState = PlayerState.Run;
-        }
-        else if (Input.GetKey(KeyCode.S))
-        {
-            playerState = PlayerState.Crouch;
-        }
-        else if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
-        {
-            playerState = PlayerState.Jump;
-        }
-        else
+        if (!Input.anyKey)
         {
             playerState = PlayerState.Idle;
         }
+        if (isGrounded)
+        {
+            if (Input.GetAxis("Horizontal") != 0)
+            {
+                playerState = PlayerState.Run;
+            }
+            if (Input.GetKey(KeyCode.S))
+            {
+                playerState = PlayerState.Crouch;
+            }
+            if (Input.GetKey(KeyCode.W))
+            {
+                playerState = PlayerState.Jump;
+            }
+        }
+        
     }
 
     void IdleState()
     {
-        rig2d.velocity = Vector2.zero;
+        Debug.Log("Idle");
+        boxCol.enabled = true;
     }
 
     void RunState()
     {
-        // moveInput 값에 따라 Idle동작과 Run동작을 결정
+        Debug.Log("달기기");
         float moveInput = Input.GetAxisRaw("Horizontal");
 
         rig2d.velocity = new Vector2(moveInput * speed, rig2d.velocity.y);
@@ -125,15 +131,18 @@ public class PlayerController : MonoBehaviour
 
     void CrouchState()
     {
+        Debug.Log("숙이기");
         rig2d.velocity = Vector2.zero;
         boxCol.enabled = false;
     }
 
     void JumpState()
     {
+        Debug.Log("점프");
         isGrounded = false;
 
         rig2d.AddForce(new Vector2(rig2d.velocity.x, jumpForce));
+        playerState = PlayerState.Run;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
