@@ -9,7 +9,7 @@ public enum PlayerState
     Run,
     Crouch,
     Jump,
-    // °ø°İµµ ¾Ö´Ï¸ŞÀÌ¼Ç ºí·»µå·Î gauge°ª¿¡ µû¶ó? ±×·¯¸é Attack ÇÏ³ª¸¸ ÀÖ¾îµµ µÊ
+    // ê³µê²©ë„ ì• ë‹ˆë©”ì´ì…˜ ë¸”ë Œë“œë¡œ gaugeê°’ì— ë”°ë¼? ê·¸ëŸ¬ë©´ Attack í•˜ë‚˜ë§Œ ìˆì–´ë„ ë¨
     WeekAttack,
     MiddleAttack,
     StrongAttack,
@@ -20,7 +20,7 @@ public enum PlayerState
 
 public class PlayerController : MonoBehaviour
 {
-    // git test
+    // git test 12312312321
     PlayerState playerState;
 
     Animator anim;
@@ -52,7 +52,7 @@ public class PlayerController : MonoBehaviour
         switch (playerState)
         {
             case PlayerState.Idle:
-                // ¾Ö´Ï¸ŞÀÌÅÍ¿¡¼­ RunÀÌ¶û ºí·»µåÇØ¼­ µû·Î Idle »ç¿ëX, x¼Óµµ°¡ 0ÀÌ¸é ÀÚµ¿À¸·Î Idle
+                // ì• ë‹ˆë©”ì´í„°ì—ì„œ Runì´ë‘ ë¸”ë Œë“œí•´ì„œ ë”°ë¡œ Idle ì‚¬ìš©X, xì†ë„ê°€ 0ì´ë©´ ìë™ìœ¼ë¡œ Idle
                 IdleState();
                 break;
             case PlayerState.Run:
@@ -112,7 +112,7 @@ public class PlayerController : MonoBehaviour
 
     void RunState()
     {
-        // moveInput °ª¿¡ µû¶ó Idleµ¿ÀÛ°ú Runµ¿ÀÛÀ» °áÁ¤
+        // moveInput ê°’ì— ë”°ë¼ Idleë™ì‘ê³¼ Runë™ì‘ì„ ê²°ì •
         float moveInput = Input.GetAxisRaw("Horizontal");
 
         rig2d.velocity = new Vector2(moveInput * speed, rig2d.velocity.y);
