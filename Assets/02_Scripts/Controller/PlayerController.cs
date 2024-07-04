@@ -5,22 +5,21 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public float speed = 1f;
-    public float jumpForce = 5f;
-    private float chargeTime = 0f;
-    private float chargeAtk = 1f; // 기본 공격과 강공격의 경계
-    private float fullChargeAtk = 2f; // 강공격과 특수공격의 경계
+    float speed = 1f;
+    float jumpForce = 5f;
+    float dashForce = 3f;
+    float moveInput;
+    private float chargeTime = 0f;  // 차지하는 시간
+    private float chargeAtk = 0.5f; // 기본 공격과 강공격의 경계
+    private float fullChargeAtk = 1f; // 강공격과 특수공격의 경계
 
-    public bool isGrounded = true;
-    private bool isCharging = false;
+    bool isGrounded = true;  // 땅에 닿았는지 여부 ( 점프가능 여부 )
+    bool canDash = true;
 
     private Rigidbody2D rig2d;
     private Animator anim;
     private SpriteRenderer sr;
     private BoxCollider2D boxCol;
-
-    
-    
 
     private void Start()
     {
@@ -28,23 +27,25 @@ public class PlayerController : MonoBehaviour
         anim = GetComponent<Animator>();
         sr = GetComponent<SpriteRenderer>();
         boxCol = GetComponent<BoxCollider2D>();
-
-
     }
 
     private void Update()
     {
         HandleInput();
-        UpdateCharge();
     }
 
     void HandleInput()
     {
-        float moveInput = Input.GetAxisRaw("Horizontal");
+        moveInput = Input.GetAxisRaw("Horizontal");
+
+        if (Input.GetMouseButtonDown(1) && canDash)
+        {
+            Dash();
+        }
 
         if (moveInput != 0)
         {
-            Move(moveInput);
+            Move();
         }
         else
         {
@@ -55,13 +56,18 @@ public class PlayerController : MonoBehaviour
         {
             Crouch();
         }
+        else if (Input.GetKeyUp(KeyCode.S) && isGrounded)
+        {
+            anim.SetBool("doCrouch", false);
+            speed = 1f;
+        }
 
-        if (Input.GetKeyDown(KeyCode.W) && isGrounded)
+        if (Input.GetKey(KeyCode.Space) && isGrounded)
         {
             Jump();
         }
 
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButton(0))
         {
             StartCharge();
         }
@@ -70,44 +76,67 @@ public class PlayerController : MonoBehaviour
         {
             ChargeAttack();
         }
+
+        anim.SetFloat("jumpVel", rig2d.velocity.y);
+        anim.SetFloat("doJump", Mathf.Abs(rig2d.velocity.y));
     }
 
-    void Move(float moveInput)
+    // 이동
+    void Move()
     {
-        rig2d.velocity = new Vector2(moveInput * speed, rig2d.velocity.y);
-
+        anim.SetFloat("doRun", Mathf.Abs(moveInput));
+        transform.Translate(Vector2.right * moveInput * speed * Time.deltaTime);
         sr.flipX = moveInput < 0;
     }
 
+    // 대기
     void Idle()
     {
+        anim.SetFloat("doRun", Mathf.Abs(moveInput));
         Debug.Log("대기");
         boxCol.enabled = true;
     }
 
+    // 숙이기
     void Crouch()
     {
+        anim.SetBool("doCrouch", true);
+        speed = 0f;
         Debug.Log("앉기");
-        rig2d.velocity = Vector2.zero;
         boxCol.enabled = false;
     }
 
+    // 점프
     void Jump()
     {
         isGrounded = false;
-        rig2d.AddForce(new Vector2(rig2d.velocity.x, jumpForce), ForceMode2D.Impulse);
+        rig2d.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
     }
 
+    // 대시
+    void Dash()
+    {
+        anim.SetTrigger("doDash");
+        //canDash = false;
+        if (!sr.flipX)
+        {
+            rig2d.AddForce(new Vector2(dashForce, 0), ForceMode2D.Impulse);
+        }
+        else
+        {
+            rig2d.AddForce(new Vector2(-dashForce, 0), ForceMode2D.Impulse);
+        }
+    }
+
+    // 차지 시작, 차지 시간 증가
     void StartCharge()
     {
-        isCharging = true;
-        chargeTime = 0f;
+        chargeTime += Time.deltaTime;
     }
 
+    // 차지 시간에 따른 공격
     void ChargeAttack()
     {
-        isCharging = false;
-
         if (chargeTime >= fullChargeAtk)
         {
             FullCAttack();
@@ -121,27 +150,23 @@ public class PlayerController : MonoBehaviour
             BasicAttack();
         }
 
+        // 공격 후 차지 시간 초기화
         chargeTime = 0f;
     }
 
-    void UpdateCharge()
-    {
-        if (isCharging)
-        {
-            chargeTime += Time.deltaTime;
-        }
-    }
-
+    // 차지 없이 기본 공격
     void BasicAttack()
     {
         Debug.Log("기본 공격");
     }
 
+    // 약간 차지한 공격
     void CAttack()
     {
         Debug.Log("차지 공격");
     }
 
+    // 최대 차지 공격
     void FullCAttack()
     {
         Debug.Log("풀차지 공격");
@@ -152,6 +177,7 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             isGrounded = true;
+            canDash = true;
         }
     }
 }
