@@ -3,11 +3,18 @@ using System.Collections.Generic;
 using UnityEditor.Tilemaps;
 using UnityEngine;
 
+enum State
+{
+    Move,
+    Attack,
+    Dead,
+}
+
 public class PlayerController : MonoBehaviour
 {
     float speed = 1f;
-    float jumpForce = 5f;
-    float dashForce = 3f;
+    float jumpForce = 4f;
+    float dashForce = 2f;
     float moveInput;
     private float chargeTime = 0f;  // 차지하는 시간
     private float chargeAtk = 0.5f; // 기본 공격과 강공격의 경계
@@ -123,11 +130,13 @@ public class PlayerController : MonoBehaviour
        
         if (!sr.flipX)
         {
-            rig2d.AddForce(new Vector2(dashForce, 0), ForceMode2D.Impulse);
+            //rig2d.AddForce(new Vector2(dashForce, 0), ForceMode2D.Impulse);
+            rig2d.velocity = new Vector2(dashForce, rig2d.velocity.y);
         }
         else
         {
-            rig2d.AddForce(new Vector2(-dashForce, 0), ForceMode2D.Impulse);
+            //rig2d.AddForce(new Vector2(-dashForce, 0), ForceMode2D.Impulse);
+            rig2d.velocity = new Vector2(-dashForce, rig2d.velocity.y);
         }
         StartCoroutine(DashCoolDownCo());
     }
@@ -146,7 +155,7 @@ public class PlayerController : MonoBehaviour
     // 차지 시간에 따른 공격
     void ChargeAttack()
     {
-        //speed = 0;
+        speed = 0;
         if (chargeTime >= fullChargeAtk)
         {
             FullCAttack();
@@ -183,6 +192,11 @@ public class PlayerController : MonoBehaviour
     {
         anim.SetTrigger("doFullCAttack");
         Debug.Log("풀차지 공격");
+    }
+
+    void EventSetMoveSpd()
+    {
+        speed = 1f;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
