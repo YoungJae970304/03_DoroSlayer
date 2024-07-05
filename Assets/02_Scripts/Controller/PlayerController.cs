@@ -32,6 +32,7 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         HandleInput();
+        Debug.Log("대시가능여부 : " + canDash);
     }
 
     void HandleInput()
@@ -116,8 +117,10 @@ public class PlayerController : MonoBehaviour
     // 대시
     void Dash()
     {
+        canDash = false;
+
         anim.SetTrigger("doDash");
-        //canDash = false;
+       
         if (!sr.flipX)
         {
             rig2d.AddForce(new Vector2(dashForce, 0), ForceMode2D.Impulse);
@@ -126,6 +129,12 @@ public class PlayerController : MonoBehaviour
         {
             rig2d.AddForce(new Vector2(-dashForce, 0), ForceMode2D.Impulse);
         }
+        StartCoroutine(DashCoolDownCo());
+    }
+    IEnumerator DashCoolDownCo()
+    {
+        yield return new WaitForSeconds(1f);
+        canDash = true;
     }
 
     // 차지 시작, 차지 시간 증가
@@ -137,6 +146,7 @@ public class PlayerController : MonoBehaviour
     // 차지 시간에 따른 공격
     void ChargeAttack()
     {
+        //speed = 0;
         if (chargeTime >= fullChargeAtk)
         {
             FullCAttack();
@@ -147,7 +157,7 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            BasicAttack();
+            WeekAttack();
         }
 
         // 공격 후 차지 시간 초기화
@@ -155,20 +165,23 @@ public class PlayerController : MonoBehaviour
     }
 
     // 차지 없이 기본 공격
-    void BasicAttack()
+    void WeekAttack()
     {
+        anim.SetTrigger("doWeekAttack");
         Debug.Log("기본 공격");
     }
 
     // 약간 차지한 공격
     void CAttack()
     {
+        anim.SetTrigger("doChargeAttack");
         Debug.Log("차지 공격");
     }
 
     // 최대 차지 공격
     void FullCAttack()
     {
+        anim.SetTrigger("doFullCAttack");
         Debug.Log("풀차지 공격");
     }
 
@@ -177,7 +190,7 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             isGrounded = true;
-            canDash = true;
+            //canDash = true;
         }
     }
 }
