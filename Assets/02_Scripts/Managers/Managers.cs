@@ -10,17 +10,11 @@ public class Managers : MonoBehaviour
     public static Managers Instance { get { Init(); return s_instance; } }
 
     DataManager _data = new DataManager();
-    public static DataManager data { get { return Instance._data; } }
+    public static DataManager Data { get { return Instance._data; } }
 
     void Start()
     {
         Init();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 
     static void Init()

@@ -10,11 +10,6 @@ public enum PlayerClass
 
 public class Player : MonoBehaviour
 {
-    // 캐릭터 기본 변수
-    [SerializeField]
-    protected float maxHP = 100;
-    protected float CurrentHP { get; set; }
-
     // 이동 관련 변수
     protected float speed = 1f;     // 기본 이동속도
     protected float jumpForce = 4f; // 점프력
@@ -32,8 +27,8 @@ public class Player : MonoBehaviour
     protected bool isDead = false;
 
     // 캐릭터 태그 관련 변수
-    KeyCode[] numKey = {KeyCode.Alpha1, KeyCode.Alpha2 };
-    public GameObject[] player;
+    List<KeyCode> numKey = new List<KeyCode>();
+    public List<GameObject> player = new List<GameObject>();
     protected static Vector2 lastPos;
 
     // 컴포넌트
@@ -41,6 +36,12 @@ public class Player : MonoBehaviour
     protected Animator anim;
     protected SpriteRenderer sr;
     protected BoxCollider2D boxCol;
+
+    protected void Start()
+    {
+        numKey.Add(KeyCode.Alpha1);
+        numKey.Add(KeyCode.Alpha2);
+    }
 
     private void OnEnable()
     {
@@ -51,25 +52,31 @@ public class Player : MonoBehaviour
 
         isGrounded = true;
         canDash = true;
+        speed = 1f;
     }
 
     private void Update()
     {
+        Debug.Log(Managers.Data.playerLife);
         HandleInput();
         ChangeInputKey();
     }
 
     protected void ChangeInputKey()
     {
-        lastPos = transform.position;
-
-        for (int i = 0; i < numKey.Length; i++)
+        // 추후 조건문으로 게이지 추가해서 게이지가 일정 이상일때만 동작되도록 설정
+        if ( !isDead )
         {
-            if (Input.GetKeyDown(numKey[i]))
+            lastPos = transform.position + new Vector3(0, 0.3f);
+
+            for (int i = 0; i < numKey.Count; i++)
             {
-                // 인덱스 i를 열거형 타입으로 변환해주고 player 변수에 대입
-                PlayerClass player = (PlayerClass)i;
-                ChangePlayer(player);
+                if (Input.GetKeyDown(numKey[i]))
+                {
+                    // 인덱스 i를 열거형 타입으로 변환해주고 player 변수에 대입
+                    PlayerClass playerClass = (PlayerClass)i;
+                    ChangePlayer(playerClass);
+                }
             }
         }
     }
@@ -77,14 +84,17 @@ public class Player : MonoBehaviour
     void ChangePlayer(PlayerClass selectedPlayer)
     {
         // 모든 캐릭터를 비활성화하고 선택된 캐릭터만 활성화
-        for(int i = 0;i < player.Length; i++)
+        for(int i = 0;i < player.Count; i++)
         {
-            player[i].gameObject.SetActive(i == (int) selectedPlayer);
-
             // 선택된 캐릭터는 마지막 위치로 이동
             if (i == (int)selectedPlayer)
             {
+                player[i].gameObject.SetActive(true);
                 player[i].transform.position = lastPos;
+            }
+            else
+            {
+                player[i].gameObject.SetActive(false);
             }
         }
     }
@@ -143,7 +153,7 @@ public class Player : MonoBehaviour
             anim.SetFloat("doJump", Mathf.Abs(rig2d.velocity.y));
         }
 
-        if (CurrentHP > 0)
+        if (Managers.Data.playerLife > 0)
         {
             anim.SetBool("doDead", false);
         }
@@ -255,22 +265,25 @@ public class Player : MonoBehaviour
     }
 
     // 자신의 현재 체력에서 적의 공격력 만큼 감소
-    public void TakeDamage(float damage)
+    public void TakeDamage(int damage)
     {
         anim.SetTrigger("doHit");
-        CurrentHP -= damage;
-        if (CurrentHP <= 0)
+
+        Managers.Data.playerLife -= damage;
+
+        if (Managers.Data.playerLife <= 0)
         {
             Dead();
         }
     }
 
-    protected void Dead()
+    void Dead()
     {
-        CurrentHP = 0f;
         isDead = true;
+
         anim.SetBool("doDead", isDead);
         anim.SetTrigger("isDead");
+
         Debug.Log("죽음");
     }
 
@@ -282,6 +295,14 @@ public class Player : MonoBehaviour
     public void EventSetAlive()
     {
         isDead = false;
+    }
+    public void EventSetDeadTimeScale()
+    {
+        Time.timeScale = 0;
+    }
+    public void EventSetAliveTimeScale()
+    {
+        Time.timeScale = 1;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

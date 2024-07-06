@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class DataManager
 {
-    
+    public int playerLife = 3;
 }

@@ -5,12 +5,6 @@ using UnityEngine;
 
 public class Toko : Player
 {
-    private void Start()
-    {
-        maxHP = 200;
-        CurrentHP = maxHP;
-    }
-
     protected override void Attack()
     {
         speed = 0;
