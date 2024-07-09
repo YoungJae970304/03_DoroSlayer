@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public enum PlayerClass
@@ -17,9 +18,11 @@ public class Player : MonoBehaviour
     protected float moveInput;      // 좌우 이동 입력받는 변수
 
     // 공격 관련 변수
+    protected int atk = 1;
     protected float chargeTime = 0f;    // 차지하는 시간
     protected float chargeAtk = 0.5f;   // 기본 공격과 강공격의 경계
     protected float fullChargeAtk = 1f; // 강공격과 특수공격의 경계
+    //protected int playerAtk = 1;
 
     // 상태 관련 변수
     protected bool isGrounded = true;   // 땅에 닿았는지 여부 ( 점프가능 여부 )
@@ -30,6 +33,9 @@ public class Player : MonoBehaviour
     List<KeyCode> numKey = new List<KeyCode>();
     public List<GameObject> player = new List<GameObject>();
     protected static Vector2 lastPos;
+
+    // 적 관련 변수
+    protected List<GameObject> targets = new List<GameObject>();
 
     // 컴포넌트
     protected Rigidbody2D rig2d;
@@ -171,7 +177,6 @@ public class Player : MonoBehaviour
     void Idle()
     {
         anim.SetFloat("doRun", Mathf.Abs(moveInput));
-        Debug.Log("대기");
         boxCol.enabled = true;
     }
 
@@ -180,7 +185,6 @@ public class Player : MonoBehaviour
     {
         anim.SetBool("doCrouch", true);
         speed = 0f;
-        Debug.Log("앉기");
         boxCol.enabled = false;
     }
 
@@ -244,37 +248,23 @@ public class Player : MonoBehaviour
     }
 
     // 차지 없이 기본 공격
-    protected void WeekAttack()
+    protected virtual void WeekAttack()
     {
         anim.SetTrigger("doWeekAttack");
-        Debug.Log("기본 공격");
     }
 
     // 약간 차지한 공격
-    protected void CAttack()
+    protected virtual void CAttack()
     {
         anim.SetTrigger("doChargeAttack");
         Debug.Log("차지 공격");
     }
 
     // 최대 차지 공격
-    protected void FullCAttack()
+    protected virtual void FullCAttack()
     {
         anim.SetTrigger("doFullCAttack");
         Debug.Log("풀차지 공격");
-    }
-
-    // 자신의 현재 체력에서 적의 공격력 만큼 감소
-    public void TakeDamage(int damage)
-    {
-        anim.SetTrigger("doHit");
-
-        Managers.Data.playerLife -= damage;
-
-        if (Managers.Data.playerLife <= 0)
-        {
-            Dead();
-        }
     }
 
     void Dead()
@@ -287,7 +277,19 @@ public class Player : MonoBehaviour
         Debug.Log("죽음");
     }
 
-    // 공격 애니메이션 마지막에 이벤트로 넣어줄 함수 ( 속도를 1로 만들어 다시 움직이게 )
+    // 애니메이션 마지막에 이벤트로 넣어줄 함수들
+    // 자신의 현재 체력에서 적의 공격력 만큼 감소
+    public void TakeDamage(int damage)
+    {
+        anim.SetTrigger("doHit");
+
+        Managers.Data.playerLife -= damage;
+
+        if (Managers.Data.playerLife <= 0)
+        {
+            Dead();
+        }
+    }
     public void EventSetMoveSpd()
     {
         speed = 1f;
@@ -317,6 +319,23 @@ public class Player : MonoBehaviour
             anim.SetTrigger("doGet");
             collision.gameObject.SetActive(false);
             Debug.Log("아이템 획득");
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            targets.Add(collision.gameObject);
+        }
+        
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            targets.Remove(collision.gameObject);
         }
     }
 }
