@@ -107,7 +107,7 @@ public class Enemy : MonoBehaviour
 
         anim.SetTrigger("doRun");
 
-        rig2d.velocity = dir * speed;
+        rig2d.velocity = new Vector2(dir.x * speed, 0);
     }
 
     // 데미지 적용은 공격 모션에 이벤트로 처리
@@ -153,7 +153,10 @@ public class Enemy : MonoBehaviour
     }
     public void EventAtkPlayer()
     {
-        targets[0].GetComponent<Player>().TakeDamage(atk);
+        if (targets.Count > 0)
+        {
+            targets[0].GetComponent<Player>().TakeDamage(atk);
+        }
     }
 
 

@@ -55,9 +55,4 @@ public class Metis : MonoBehaviour
         player.GetComponent<Player>().TakeDamage(1);
         gameObject.SetActive(false);
     }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        
-    }
 }
