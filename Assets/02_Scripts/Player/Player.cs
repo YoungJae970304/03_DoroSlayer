@@ -22,7 +22,7 @@ public class Player : MonoBehaviour
     protected float chargeTime = 0f;    // 차지하는 시간
     protected float chargeAtk = 0.5f;   // 기본 공격과 강공격의 경계
     protected float fullChargeAtk = 1f; // 강공격과 특수공격의 경계
-    //protected int playerAtk = 1;
+    protected float backForce = 3f;
 
     // 상태 관련 변수
     protected bool isGrounded = true;   // 땅에 닿았는지 여부 ( 점프가능 여부 )
@@ -169,13 +169,23 @@ public class Player : MonoBehaviour
     void Move()
     {
         anim.SetFloat("doRun", Mathf.Abs(moveInput));
-        transform.Translate(Vector2.right * moveInput * speed * Time.deltaTime);
-        sr.flipX = moveInput < 0;
+        //transform.Translate(Vector2.right * moveInput * speed * Time.deltaTime);
+        transform.Translate(Vector2.right * speed * Time.deltaTime);
+        //sr.flipX = moveInput < 0;
+        if (moveInput < 0)
+        {
+            transform.eulerAngles = new Vector3(0, 180f);
+        }
+        else
+        {
+            transform.eulerAngles = new Vector3(0, 0);
+        }
     }
 
     // 대기
     void Idle()
     {
+        speed = 1;
         anim.SetFloat("doRun", Mathf.Abs(moveInput));
         boxCol.enabled = true;
     }
@@ -202,6 +212,17 @@ public class Player : MonoBehaviour
 
         anim.SetTrigger("doDash");
 
+        if (moveInput >= 0)
+        {
+            //rig2d.AddForce(new Vector2(dashForce, 0), ForceMode2D.Impulse);
+            rig2d.velocity = new Vector2(dashForce, rig2d.velocity.y);
+        }
+        else
+        {
+            //rig2d.AddForce(new Vector2(-dashForce, 0), ForceMode2D.Impulse);
+            rig2d.velocity = new Vector2(-dashForce, rig2d.velocity.y);
+        }
+        /*
         if (!sr.flipX)
         {
             //rig2d.AddForce(new Vector2(dashForce, 0), ForceMode2D.Impulse);
@@ -212,6 +233,7 @@ public class Player : MonoBehaviour
             //rig2d.AddForce(new Vector2(-dashForce, 0), ForceMode2D.Impulse);
             rig2d.velocity = new Vector2(-dashForce, rig2d.velocity.y);
         }
+        */
         StartCoroutine(DashCoolDownCo());
     }
     IEnumerator DashCoolDownCo()
@@ -263,6 +285,7 @@ public class Player : MonoBehaviour
     // 최대 차지 공격
     protected virtual void FullCAttack()
     {
+        backForce = 0;
         anim.SetTrigger("doFullCAttack");
         Debug.Log("풀차지 공격");
     }
@@ -293,6 +316,7 @@ public class Player : MonoBehaviour
     public void EventSetMoveSpd()
     {
         speed = 1f;
+        backForce = 3f;
     }
     public void EventSetAlive()
     {

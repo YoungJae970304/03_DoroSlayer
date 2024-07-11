@@ -7,13 +7,14 @@ using static UnityEngine.GraphicsBuffer;
 public class Metis : MonoBehaviour
 {
     float spd = 2f;
+    float backForce = 1f;
 
     Vector3 playerPos;
     Vector2 dir;
 
     SpriteRenderer sr;
 
-    GameObject player;
+    GameObject player, laplace;
 
     private void Awake()
     {
@@ -22,6 +23,7 @@ public class Metis : MonoBehaviour
 
     void OnEnable()
     {
+        laplace = transform.parent.gameObject;
         playerPos = GameObject.FindGameObjectWithTag("Player").transform.position;
         dir = (playerPos - transform.position).normalized;
 
@@ -53,6 +55,9 @@ public class Metis : MonoBehaviour
     {
         yield return new WaitForSeconds(0.2f);
         player.GetComponent<Player>().TakeDamage(1);
+
+        float dir = player.transform.position.x - laplace.transform.position.x;
+        player.GetComponent<Rigidbody2D>().AddForce(new Vector2(dir, 0.5f) * backForce, ForceMode2D.Impulse);
         gameObject.SetActive(false);
     }
 }

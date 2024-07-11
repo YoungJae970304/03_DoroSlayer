@@ -5,20 +5,20 @@ using UnityEngine;
 
 public class Toko : Player
 {
-    public BoxCollider2D punchRange, ShotRange;
+    public BoxCollider2D punchRange, ShootRange;
 
     protected override void Attack()
     {
         speed = 0;
         if (chargeTime >= chargeAtk)
         {
-            ShotRange.enabled = true;
+            ShootRange.enabled = true;
             punchRange.enabled = false;
             CAttack();
         }
         else
         {
-            ShotRange.enabled = false;
+            ShootRange.enabled = false;
             punchRange.enabled = true;
             WeekAttack();
         }
@@ -33,6 +33,9 @@ public class Toko : Player
         {
             targets[0].GetComponent<Enemy>().Hit(damage + atk);
             //나중에 targets[0].transform.position에 터지는 이펙트 생성
+
+            float dir = targets[0].transform.position.x - transform.position.x;
+            targets[0].GetComponent<Rigidbody2D>().AddForce(new Vector2(dir, 0.5f) * backForce, ForceMode2D.Impulse);
         }
     }
 }

@@ -25,6 +25,7 @@ public class Enemy : MonoBehaviour
     protected float distance;
     protected Vector2 dir;
     protected List<GameObject> targets = new List<GameObject>();
+    protected float backForce = 1f;
 
     // 몬스터 상태
     protected EnemyState enemyState;
@@ -33,6 +34,7 @@ public class Enemy : MonoBehaviour
     protected Rigidbody2D rig2d;
     protected Animator anim;
     protected SpriteRenderer sr;
+    public BoxCollider2D detectRange, nearRange;
 
     private void OnEnable()
     {
@@ -53,24 +55,6 @@ public class Enemy : MonoBehaviour
         
         // 기본 상태
         enemyState = EnemyState.Idle;
-        
-        if (targets.Count > 0)
-        {
-            // 현재 활성화 되어있는 플레이어와 몬스터의 거리
-            distance = Vector2.Distance(targets[0].transform.position, gameObject.transform.position);
-
-            // 잡몹 //
-            // 일정 거리 내에 있다면 추적 (Move)
-            if (distance < 1.5f)
-            {
-                enemyState = EnemyState.Move;
-            }
-            // 근거리에 있다면 공격
-            if (distance <= 0.5f)
-            {
-                enemyState = EnemyState.Attack;
-            }
-        }
     }
 
     void LateUpdate()
@@ -97,13 +81,16 @@ public class Enemy : MonoBehaviour
 
     void Idle()
     {
-        Debug.Log("Idle");
+        detectRange.enabled = true;
+        nearRange.enabled = false;
+
         anim.SetTrigger("doIdle");
     }
 
     void Move()
     {
-        Debug.Log("Move");
+        detectRange.enabled = true;
+        nearRange.enabled = false;
 
         anim.SetTrigger("doRun");
 
@@ -111,11 +98,13 @@ public class Enemy : MonoBehaviour
     }
 
     // 데미지 적용은 공격 모션에 이벤트로 처리
-    protected virtual void Attack()
+    void Attack()
     {
-        rig2d.velocity = Vector2.zero;
+        detectRange.enabled = false;
+        nearRange.enabled = true;
 
         currentTime += Time.deltaTime;
+
         if (currentTime >= atkCooltime)
         {
             anim.SetTrigger("doAttack");
@@ -125,7 +114,7 @@ public class Enemy : MonoBehaviour
 
     protected virtual void FarAttack()
     {
-        // boss에서 재정의
+        
     }
 
     public void Hit(int damage)
@@ -156,6 +145,9 @@ public class Enemy : MonoBehaviour
         if (targets.Count > 0)
         {
             targets[0].GetComponent<Player>().TakeDamage(atk);
+
+            float dir = targets[0].transform.position.x - transform.position.x;
+            targets[0].GetComponent<Rigidbody2D>().AddForce(new Vector2(dir, 0.5f) * backForce, ForceMode2D.Impulse);
         }
     }
 
@@ -176,5 +168,4 @@ public class Enemy : MonoBehaviour
             targets.Remove( collision.gameObject );
         }
     }
-    
 }

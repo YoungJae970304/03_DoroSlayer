@@ -21,15 +21,7 @@ public class Boss : Enemy
 
     protected override void Update()
     {
-        Debug.Log("메티스 " + life);
-        if (targets.Count > 0)
-        {
-            dir = (targets[0].transform.position - transform.position).normalized;
-            sr.flipX = dir.x > 0;
-        }
-
-        // 기본 상태
-        enemyState = EnemyState.Idle;
+        base.Update();
 
         if (targets.Count > 0)
         {
@@ -38,7 +30,7 @@ public class Boss : Enemy
 
             // 보스 //
             // 거리가 멀면 추적
-            if (distance > 3f )
+            if ( distance > 3f )
             {
                 enemyState = EnemyState.Move;
             }
@@ -59,9 +51,9 @@ public class Boss : Enemy
     protected override void FarAttack()
     {
         // 보스의 원거리 공격 정의
-        rig2d.velocity = Vector2.zero;
 
         currentTime += Time.deltaTime;
+
         if (currentTime >= shotAtkCooltime)
         {
             anim.SetTrigger("doFarAttack");
