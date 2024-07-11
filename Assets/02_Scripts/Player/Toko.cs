@@ -31,6 +31,8 @@ public class Toko : Player
     {
         if (targets.Count > 0)
         {
+            Managers.Data.PlayerGage += 10f;
+
             targets[0].GetComponent<Enemy>().Hit(damage + atk);
             //나중에 targets[0].transform.position에 터지는 이펙트 생성
 

@@ -63,15 +63,16 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        Debug.Log(Managers.Data.playerLife);
+        Debug.Log(Managers.Data.PlayerLife);
+        Debug.Log(Managers.Data.PlayerGage);
         HandleInput();
         ChangeInputKey();
     }
 
     protected void ChangeInputKey()
     {
-        // 추후 조건문으로 게이지 추가해서 게이지가 일정 이상일때만 동작되도록 설정
-        if ( !isDead )
+        // 게이지가 일정 이상일때만 동작되도록 설정
+        if ( !isDead && Managers.Data.PlayerGage >= 30f )
         {
             lastPos = transform.position + new Vector3(0, 0.3f);
 
@@ -82,6 +83,8 @@ public class Player : MonoBehaviour
                     // 인덱스 i를 열거형 타입으로 변환해주고 player 변수에 대입
                     PlayerClass playerClass = (PlayerClass)i;
                     ChangePlayer(playerClass);
+
+                    Managers.Data.PlayerGage -= 30f;
                 }
             }
         }
@@ -155,11 +158,17 @@ public class Player : MonoBehaviour
                 Attack();
             }
 
+            // R키를 누르면 라이프 회복
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                StartCoroutine(LifeUp());
+            }
+
             anim.SetFloat("jumpVel", rig2d.velocity.y);
             anim.SetFloat("doJump", Mathf.Abs(rig2d.velocity.y));
         }
 
-        if (Managers.Data.playerLife > 0)
+        if (Managers.Data.PlayerLife > 0)
         {
             anim.SetBool("doDead", false);
         }
@@ -300,15 +309,27 @@ public class Player : MonoBehaviour
         Debug.Log("죽음");
     }
 
+    IEnumerator LifeUp()
+    {
+        if (Managers.Data.PlayerGage >= 70)
+        {
+            speed = 0;
+            anim.SetTrigger("doGet");
+            yield return new WaitUntil(() => anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f);
+            Managers.Data.PlayerLife++;
+            Managers.Data.PlayerGage -= 70;
+        }
+    }
+
     // 애니메이션 마지막에 이벤트로 넣어줄 함수들
     // 자신의 현재 체력에서 적의 공격력 만큼 감소
     public void TakeDamage(int damage)
     {
         anim.SetTrigger("doHit");
 
-        Managers.Data.playerLife -= damage;
+        Managers.Data.PlayerLife -= damage;
 
-        if (Managers.Data.playerLife <= 0)
+        if (Managers.Data.PlayerLife <= 0)
         {
             Dead();
         }

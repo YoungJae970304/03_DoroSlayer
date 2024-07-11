@@ -11,6 +11,8 @@ public class UnityChan : Player
     {
         if (targets.Count > 0)
         {
+            Managers.Data.PlayerGage += 10f;
+
             targets[0].GetComponent<Enemy>().Hit(damage + atk);
 
             float dir = targets[0].transform.position.x - transform.position.x;
