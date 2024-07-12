@@ -13,9 +13,9 @@ public enum PlayerClass
 public class Player : MonoBehaviour
 {
     // 이동 관련 변수
-    protected float speed = 1f;     // 기본 이동속도
-    protected float jumpForce = 4f; // 점프력
-    protected float dashForce = 2f; // 대시 속도
+    protected float speed = 2f;     // 기본 이동속도
+    protected float jumpForce = 5f; // 점프력
+    protected float dashForce = 3f; // 대시 속도
     protected float moveInput;      // 좌우 이동 입력받는 변수
 
     // 공격 관련 변수
@@ -60,7 +60,7 @@ public class Player : MonoBehaviour
 
         isGrounded = true;
         canDash = true;
-        speed = 1f;
+        speed = 2f;
     }
 
     private void Update()
@@ -151,7 +151,7 @@ public class Player : MonoBehaviour
             else if (Input.GetKeyUp(KeyCode.S) && isGrounded)
             {
                 anim.SetBool("doCrouch", false);
-                speed = 1f;
+                speed = 2f;
             }
 
             // 땅에있고 Space 누르면 점프
@@ -214,7 +214,7 @@ public class Player : MonoBehaviour
     // 대기
     void Idle()
     {
-        speed = 1;
+        speed = 2;
         anim.SetFloat("doRun", Mathf.Abs(moveInput));
         boxCol.enabled = true;
     }
@@ -364,7 +364,7 @@ public class Player : MonoBehaviour
     // 애니메이션 특정 부분에서 이벤트로 사용될 함수
     public void EventSetMoveSpd()
     {
-        speed = 1f;
+        speed = 2f;
         backForce = 3f;
     }
     public void EventSetAlive()

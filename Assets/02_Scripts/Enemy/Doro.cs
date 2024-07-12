@@ -20,12 +20,12 @@ public class Doro : Enemy
 
             // 잡몹 //
             // 일정 거리 내에 있다면 추적 (Move)
-            if (distance < 1.5f)
+            if (distance > 1f)
             {
                 enemyState = EnemyState.Move;
             }
             // 근거리에 있다면 공격
-            if (distance <= 0.5f)
+            else if (distance <= 1f)
             {
                 enemyState = EnemyState.Attack;
             }

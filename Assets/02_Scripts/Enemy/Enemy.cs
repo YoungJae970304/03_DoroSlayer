@@ -17,6 +17,7 @@ public class Enemy : MonoBehaviour
     // 몬스터 스탯 변수
     protected int atk = 1;
     protected int life = 5;
+    protected int maxLife = 5;
     protected float currentTime = 1.8f;
     protected float atkCooltime = 2f;
     protected float speed = 0.75f;
@@ -41,6 +42,8 @@ public class Enemy : MonoBehaviour
         rig2d = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         sr = GetComponent<SpriteRenderer>();
+
+        life = maxLife;
 
         enemyState = EnemyState.Idle;
     }
@@ -88,7 +91,7 @@ public class Enemy : MonoBehaviour
     {
         anim.SetTrigger("doRun");
 
-        rig2d.velocity = new Vector2(dir.x * speed, 0);
+        rig2d.velocity = new Vector2(dir.x * speed, rig2d.velocity.y);
     }
 
     // 데미지 적용은 공격 모션에 이벤트로 처리
