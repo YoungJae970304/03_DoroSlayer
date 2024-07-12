@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public enum PlayerClass
 {
@@ -27,7 +28,7 @@ public class Player : MonoBehaviour
     // 상태 관련 변수
     protected bool isGrounded = true;   // 땅에 닿았는지 여부 ( 점프가능 여부 )
     protected bool canDash = true;      // 대시할 수 있는지 여부 ( 대시 쿨타임 관련 )
-    protected bool isDead = false;
+    protected bool isDead = false;      // 현재 생존 상태
 
     // 캐릭터 태그 관련 변수
     List<KeyCode> numKey = new List<KeyCode>();
@@ -49,6 +50,7 @@ public class Player : MonoBehaviour
         numKey.Add(KeyCode.Alpha2);
     }
 
+    // 오브젝트 활성화 시 초기화 해주는 작업
     private void OnEnable()
     {
         rig2d = GetComponent<Rigidbody2D>();
@@ -65,8 +67,15 @@ public class Player : MonoBehaviour
     {
         Debug.Log(Managers.Data.PlayerLife);
         Debug.Log(Managers.Data.PlayerGage);
-        HandleInput();
-        ChangeInputKey();
+        HandleInput();      // 키 입력에 대한 부분을 담당하는 함수
+        ChangeInputKey();   // 캐릭터 태그 함수
+
+        // 재시작 코드
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Time.timeScale = 1f;
+            SceneManager.LoadScene(0);
+        }
     }
 
     protected void ChangeInputKey()
@@ -108,12 +117,16 @@ public class Player : MonoBehaviour
         }
     }
 
+    // 키 입력 함수
     protected void HandleInput()
     {
+        // 좌우 키 입력을 moveInput에 대입
         moveInput = Input.GetAxisRaw("Horizontal");
+
+        // 캐릭터가 죽지 않은 상태라면 즉, 살아있을 때만 키 입력 발생
         if ( !isDead )
         {
-            // 우클릭을 눌렀고 대시가 가능하면 대시
+            // 우클릭을 눌렀고 대쉬가 가능하면 대쉬
             if (Input.GetMouseButtonDown(1) && canDash)
             {
                 Dash();
@@ -164,8 +177,12 @@ public class Player : MonoBehaviour
                 StartCoroutine(LifeUp());
             }
 
-            anim.SetFloat("jumpVel", rig2d.velocity.y);
+            // 속도y의 절대값에 따라 점프 모션 재생 ( 0.001 이상이면 점프중, 0이면 점프X )
             anim.SetFloat("doJump", Mathf.Abs(rig2d.velocity.y));
+
+            // 애니메이션 블렌드 설정
+            // 점프 시 상승(+)일 때 상승 애니메이션 재생, 하강(-)일 때 하강 애니메이션 재생
+            anim.SetFloat("jumpVel", rig2d.velocity.y); 
         }
 
         if (Managers.Data.PlayerLife > 0)
@@ -177,10 +194,13 @@ public class Player : MonoBehaviour
     // 이동
     void Move()
     {
+        // 좌우 입력키의 절대값에 따라 이동하는 애니메이션 재생
         anim.SetFloat("doRun", Mathf.Abs(moveInput));
-        //transform.Translate(Vector2.right * moveInput * speed * Time.deltaTime);
+
+        // 실제 이동에 관련된 코드
         transform.Translate(Vector2.right * speed * Time.deltaTime);
-        //sr.flipX = moveInput < 0;
+
+        // 좌우 입력값에 따라 캐릭터 좌,우 방향 설정
         if (moveInput < 0)
         {
             transform.eulerAngles = new Vector3(0, 180f);
@@ -202,51 +222,51 @@ public class Player : MonoBehaviour
     // 숙이기
     void Crouch()
     {
+        // 숙이는 애니메이션 재생
         anim.SetBool("doCrouch", true);
+
+        // 숙일때는 속도를 0으로 해서 이동불가
         speed = 0f;
+
+        // 피격에 관련된 콜라이더를 비활성화
         boxCol.enabled = false;
     }
 
     // 점프
     void Jump()
     {
+        // 2단 점프를 방지하기 위한 변수 설정
         isGrounded = false;
+
+        // 실제 점프, jumpForce만큼 y축으로 힘을 가함
         rig2d.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
     }
 
-    // 대시
+    // 대쉬
     void Dash()
     {
+        // 연속 대쉬를 방지하기 위한 변수 설정
         canDash = false;
 
+        // 대쉬 애니메이션 재생
         anim.SetTrigger("doDash");
 
+        // 좌우 방향에 따른 대쉬 설정
         if (moveInput >= 0)
         {
-            //rig2d.AddForce(new Vector2(dashForce, 0), ForceMode2D.Impulse);
             rig2d.velocity = new Vector2(dashForce, rig2d.velocity.y);
         }
         else
         {
-            //rig2d.AddForce(new Vector2(-dashForce, 0), ForceMode2D.Impulse);
             rig2d.velocity = new Vector2(-dashForce, rig2d.velocity.y);
         }
-        /*
-        if (!sr.flipX)
-        {
-            //rig2d.AddForce(new Vector2(dashForce, 0), ForceMode2D.Impulse);
-            rig2d.velocity = new Vector2(dashForce, rig2d.velocity.y);
-        }
-        else
-        {
-            //rig2d.AddForce(new Vector2(-dashForce, 0), ForceMode2D.Impulse);
-            rig2d.velocity = new Vector2(-dashForce, rig2d.velocity.y);
-        }
-        */
+
+        // 대쉬 쿨타임
         StartCoroutine(DashCoolDownCo());
     }
     IEnumerator DashCoolDownCo()
     {
+        // 1초로 설정 후 1초가 지나면 대쉬 가능하게 해주는 변수 설정
         yield return new WaitForSeconds(1f);
         canDash = true;
     }
@@ -299,10 +319,13 @@ public class Player : MonoBehaviour
         Debug.Log("풀차지 공격");
     }
 
+    // 사망 관련 함수
     void Dead()
     {
+        // 사망 상태 변수 설정
         isDead = true;
 
+        // 현재 사망상태에 따른 애니메이션 실행
         anim.SetBool("doDead", isDead);
         anim.SetTrigger("isDead");
 
@@ -325,15 +348,20 @@ public class Player : MonoBehaviour
     // 자신의 현재 체력에서 적의 공격력 만큼 감소
     public void TakeDamage(int damage)
     {
+        // 피격 애니메이션 재생
         anim.SetTrigger("doHit");
 
+        // 플레이어의 HP에서 데미지만큼 감소
         Managers.Data.PlayerLife -= damage;
 
+        // HP가 0 이하면 사망
         if (Managers.Data.PlayerLife <= 0)
         {
             Dead();
         }
     }
+
+    // 애니메이션 특정 부분에서 이벤트로 사용될 함수
     public void EventSetMoveSpd()
     {
         speed = 1f;
@@ -352,16 +380,23 @@ public class Player : MonoBehaviour
         Time.timeScale = 1;
     }
 
+    // 충돌
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        // Ground 태그를 가진 오브젝트와 충돌하면
         if (collision.gameObject.CompareTag("Ground"))
         {
+            // 점프가 가능하게 하는 변수 설정
             isGrounded = true;
         }
+
+        // Item 태그를 가진 오브젝트와 충돌 시
         else if (collision.gameObject.CompareTag("Item"))
         {
+            // 속도를 0으로 하고 획득 애니메이션 실행
             speed = 0;
             anim.SetTrigger("doGet");
+            // 충돌한 오브젝트는 비활성화
             collision.gameObject.SetActive(false);
             Debug.Log("아이템 획득");
         }

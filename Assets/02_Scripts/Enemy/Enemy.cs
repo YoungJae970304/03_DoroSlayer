@@ -34,7 +34,7 @@ public class Enemy : MonoBehaviour
     protected Rigidbody2D rig2d;
     protected Animator anim;
     protected SpriteRenderer sr;
-    public BoxCollider2D detectRange, nearRange;
+    public BoxCollider2D detectRange;
 
     private void OnEnable()
     {
@@ -81,17 +81,11 @@ public class Enemy : MonoBehaviour
 
     void Idle()
     {
-        detectRange.enabled = true;
-        nearRange.enabled = false;
-
         anim.SetTrigger("doIdle");
     }
 
     void Move()
     {
-        detectRange.enabled = true;
-        nearRange.enabled = false;
-
         anim.SetTrigger("doRun");
 
         rig2d.velocity = new Vector2(dir.x * speed, 0);
@@ -100,9 +94,6 @@ public class Enemy : MonoBehaviour
     // 데미지 적용은 공격 모션에 이벤트로 처리
     void Attack()
     {
-        detectRange.enabled = false;
-        nearRange.enabled = true;
-
         currentTime += Time.deltaTime;
 
         if (currentTime >= atkCooltime)
@@ -149,6 +140,14 @@ public class Enemy : MonoBehaviour
             float dir = targets[0].transform.position.x - transform.position.x;
             targets[0].GetComponent<Rigidbody2D>().AddForce(new Vector2(dir, 0.5f) * backForce, ForceMode2D.Impulse);
         }
+    }
+    public void EventSetDetectOn()
+    {
+        detectRange.enabled = true;
+    }
+    public void EventSetDetectOff()
+    {
+        detectRange.enabled = false;
     }
 
 
