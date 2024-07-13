@@ -6,6 +6,7 @@ using UnityEngine;
 public class Toko : Player
 {
     public BoxCollider2D punchRange, ShootRange;
+    List<GameObject> breakableOb = new List<GameObject>();
 
     protected override void Attack()
     {
@@ -38,6 +39,31 @@ public class Toko : Player
 
             float dir = targets[0].transform.position.x - transform.position.x;
             targets[0].GetComponent<Rigidbody2D>().AddForce(new Vector2(dir, 0.5f) * backForce, ForceMode2D.Impulse);
+        }
+
+        if (breakableOb.Count > 0)
+        {
+            Managers.Data.PlayerGage += 10f;
+            breakableOb[0].SetActive(false);
+        }
+    }
+
+    protected override void OnTriggerEnter2D(Collider2D collision)
+    {
+        base.OnTriggerEnter2D(collision);
+
+        if (collision.gameObject.CompareTag("Breakable"))
+        {
+            breakableOb.Add(collision.gameObject);
+        }
+    }
+
+    protected override void OnTriggerExit2D(Collider2D collision)
+    {
+        base.OnTriggerExit2D(collision);
+        if (collision.gameObject.CompareTag("Breakable"))
+        {
+            breakableOb.Remove(collision.gameObject);
         }
     }
 }

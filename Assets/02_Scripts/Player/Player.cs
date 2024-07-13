@@ -14,7 +14,8 @@ public class Player : MonoBehaviour
 {
     // 이동 관련 변수
     protected float speed = 2f;     // 기본 이동속도
-    protected float jumpForce = 5f; // 점프력
+    protected float jumpForceY = 5f; // 점프력
+    protected float jumpForceX = 0;
     protected float dashForce = 3f; // 대시 속도
     protected float moveInput;      // 좌우 이동 입력받는 변수
 
@@ -239,7 +240,7 @@ public class Player : MonoBehaviour
         isGrounded = false;
 
         // 실제 점프, jumpForce만큼 y축으로 힘을 가함
-        rig2d.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
+        rig2d.AddForce(new Vector2(jumpForceX, jumpForceY), ForceMode2D.Impulse);
     }
 
     // 대쉬
@@ -387,7 +388,23 @@ public class Player : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             // 점프가 가능하게 하는 변수 설정
-            isGrounded = true;
+            jumpForceX = 0;
+
+            if (collision.contacts[0].normal.y >= 0.7f)
+            {
+                isGrounded = true;
+            }
+
+            if (collision.contacts[0].normal.x >= 0.7f)
+            {
+                isGrounded = true;
+                jumpForceX = 3f;
+            }
+            else if (collision.contacts[0].normal.x <= -0.7f)
+            {
+                isGrounded = true;
+                jumpForceX = -3f;
+            }
         }
 
         // Item 태그를 가진 오브젝트와 충돌 시
@@ -396,13 +413,14 @@ public class Player : MonoBehaviour
             // 속도를 0으로 하고 획득 애니메이션 실행
             speed = 0;
             anim.SetTrigger("doGet");
+            Managers.Data._onElevator = true;
             // 충돌한 오브젝트는 비활성화
             collision.gameObject.SetActive(false);
             Debug.Log("아이템 획득");
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    protected virtual void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Enemy"))
         {
@@ -411,7 +429,7 @@ public class Player : MonoBehaviour
         
     }
 
-    private void OnTriggerExit2D(Collider2D collision)
+    protected virtual void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Enemy"))
         {

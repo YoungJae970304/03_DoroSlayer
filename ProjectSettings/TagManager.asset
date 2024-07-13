@@ -8,6 +8,8 @@ TagManager:
   - Item
   - Enemy
   - Range
+  - FxTemporaire
+  - Breakable
   layers:
   - Default
   - TransparentFX

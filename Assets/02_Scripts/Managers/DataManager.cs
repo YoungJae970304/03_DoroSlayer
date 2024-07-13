@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class DataManager
 {
+    public bool _onElevator = false;
+
     int life = 5;
     int maxLife = 5;
 
