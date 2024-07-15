@@ -66,6 +66,11 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
+        Vector2 nowSpd = rig2d.velocity;
+        nowSpd.x = Mathf.Clamp(rig2d.velocity.x, -dashForce, dashForce);
+        nowSpd.y = Mathf.Clamp(rig2d.velocity.y, -jumpForceY, jumpForceY);
+        rig2d.velocity = nowSpd;
+
         Debug.Log(Managers.Data.PlayerLife);
         Debug.Log(Managers.Data.PlayerGage);
         HandleInput();      // 키 입력에 대한 부분을 담당하는 함수
@@ -123,6 +128,8 @@ public class Player : MonoBehaviour
     {
         // 좌우 키 입력을 moveInput에 대입
         moveInput = Input.GetAxisRaw("Horizontal");
+
+
 
         // 캐릭터가 죽지 않은 상태라면 즉, 살아있을 때만 키 입력 발생
         if ( !isDead )
@@ -238,6 +245,19 @@ public class Player : MonoBehaviour
     {
         // 2단 점프를 방지하기 위한 변수 설정
         isGrounded = false;
+
+        if (moveInput == 0)
+        {
+            jumpForceX = 0;
+        }
+        else if (moveInput < 0)
+        {
+            jumpForceX = -1f;
+        }
+        else if (moveInput > 0)
+        {
+            jumpForceX = 1f;
+        }
 
         // 실제 점프, jumpForce만큼 y축으로 힘을 가함
         rig2d.AddForce(new Vector2(jumpForceX, jumpForceY), ForceMode2D.Impulse);
@@ -394,17 +414,18 @@ public class Player : MonoBehaviour
             {
                 isGrounded = true;
             }
-
+            
             if (collision.contacts[0].normal.x >= 0.7f)
             {
                 isGrounded = true;
-                jumpForceX = 3f;
+                //jumpForceX = 3f;
             }
             else if (collision.contacts[0].normal.x <= -0.7f)
             {
                 isGrounded = true;
-                jumpForceX = -3f;
+                //jumpForceX = -3f;
             }
+            
         }
 
         // Item 태그를 가진 오브젝트와 충돌 시
