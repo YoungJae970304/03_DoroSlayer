@@ -12,6 +12,9 @@ public class Managers : MonoBehaviour
     DataManager _data = new DataManager();
     public static DataManager Data { get { return Instance._data; } }
 
+    UIManager _ui = new UIManager();
+    public static UIManager UI { get { return Instance._ui; } }
+
     void Start()
     {
         Init();

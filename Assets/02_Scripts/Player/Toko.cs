@@ -6,7 +6,23 @@ using UnityEngine;
 public class Toko : Player
 {
     public BoxCollider2D punchRange, ShootRange;
-    List<GameObject> breakableOb = new List<GameObject>();
+    //List<GameObject> breakableOb = new List<GameObject>();
+
+    public ParticleSystem boomP;
+
+    protected override void StartCharge()
+    {
+        if (chargeAtkCheck)
+        {
+            chargeTime += Time.deltaTime;
+
+            if (chargeTime >= chargeAtk && chargeAtkCheck)
+            {
+                Instantiate(chargeP, transform);
+                chargeAtkCheck = false;
+            }
+        }
+    }
 
     protected override void Attack()
     {
@@ -34,27 +50,29 @@ public class Toko : Player
         {
             Managers.Data.PlayerGage += 10f;
 
-            targets[0].GetComponent<Enemy>().Hit(damage + atk);
-            //나중에 targets[0].transform.position에 터지는 이펙트 생성
-
             float dir = targets[0].transform.position.x - transform.position.x;
             targets[0].GetComponent<Rigidbody2D>().AddForce(new Vector2(dir, 0.5f) * backForce, ForceMode2D.Impulse);
-        }
 
-        if (breakableOb.Count > 0)
-        {
-            Managers.Data.PlayerGage += 10f;
-            breakableOb[0].SetActive(false);
+            targets[0].GetComponent<InteractiveOb>().Hit(damage + atk);
         }
     }
 
+    public void EventTokoRangeAtkEnemy(int damage)
+    {
+        if (targets.Count > 0)
+        {
+            Instantiate(boomP, targets[0].transform.position, Quaternion.identity);
+        }
+        EventTokoAtkEnemy(damage);
+    }
+
+    /*
     protected override void OnTriggerEnter2D(Collider2D collision)
     {
         base.OnTriggerEnter2D(collision);
-
         if (collision.gameObject.CompareTag("Breakable"))
         {
-            breakableOb.Add(collision.gameObject);
+            targets.Add(collision.gameObject);
         }
     }
 
@@ -63,7 +81,8 @@ public class Toko : Player
         base.OnTriggerExit2D(collision);
         if (collision.gameObject.CompareTag("Breakable"))
         {
-            breakableOb.Remove(collision.gameObject);
+            targets.Remove(collision.gameObject);
         }
     }
+    */
 }

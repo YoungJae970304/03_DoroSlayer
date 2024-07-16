@@ -14,7 +14,8 @@ public class Metis : MonoBehaviour
 
     SpriteRenderer sr;
 
-    GameObject player, laplace;
+    GameObject player;
+    public GameObject laplace;
 
     private void Awake()
     {
@@ -23,7 +24,6 @@ public class Metis : MonoBehaviour
 
     void OnEnable()
     {
-        laplace = transform.parent.gameObject;
         playerPos = GameObject.FindGameObjectWithTag("Player").transform.position;
         dir = (playerPos - transform.position).normalized;
 

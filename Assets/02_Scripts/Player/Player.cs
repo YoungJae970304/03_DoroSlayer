@@ -24,7 +24,10 @@ public class Player : MonoBehaviour
     protected float chargeTime = 0f;    // 차지하는 시간
     protected float chargeAtk = 0.5f;   // 기본 공격과 강공격의 경계
     protected float fullChargeAtk = 1f; // 강공격과 특수공격의 경계
-    protected float backForce = 3f;
+    protected float backForce = 1f;     // 적이 피격 후 날아가는 힘
+    // 차지공격 체크
+    protected bool chargeAtkCheck = true;
+    protected bool fullChargeAtkCheck = true;
 
     // 상태 관련 변수
     protected bool isGrounded = true;   // 땅에 닿았는지 여부 ( 점프가능 여부 )
@@ -44,6 +47,10 @@ public class Player : MonoBehaviour
     protected Animator anim;
     protected SpriteRenderer sr;
     protected BoxCollider2D boxCol;
+
+    // 파티클
+    public ParticleSystem chargeP;
+    public ParticleSystem bloody;
 
     protected void Start()
     {
@@ -66,6 +73,7 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
+        // 최대 속도 조절
         Vector2 nowSpd = rig2d.velocity;
         nowSpd.x = Mathf.Clamp(rig2d.velocity.x, -dashForce, dashForce);
         nowSpd.y = Mathf.Clamp(rig2d.velocity.y, -jumpForceY, jumpForceY);
@@ -75,13 +83,6 @@ public class Player : MonoBehaviour
         Debug.Log(Managers.Data.PlayerGage);
         HandleInput();      // 키 입력에 대한 부분을 담당하는 함수
         ChangeInputKey();   // 캐릭터 태그 함수
-
-        // 재시작 코드
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            Time.timeScale = 1f;
-            SceneManager.LoadScene(0);
-        }
     }
 
     protected void ChangeInputKey()
@@ -128,8 +129,6 @@ public class Player : MonoBehaviour
     {
         // 좌우 키 입력을 moveInput에 대입
         moveInput = Input.GetAxisRaw("Horizontal");
-
-
 
         // 캐릭터가 죽지 않은 상태라면 즉, 살아있을 때만 키 입력 발생
         if ( !isDead )
@@ -222,7 +221,6 @@ public class Player : MonoBehaviour
     // 대기
     void Idle()
     {
-        speed = 2;
         anim.SetFloat("doRun", Mathf.Abs(moveInput));
         boxCol.enabled = true;
     }
@@ -293,15 +291,30 @@ public class Player : MonoBehaviour
     }
 
     // 차지 시작, 차지 시간 증가
-    void StartCharge()
+    protected virtual void StartCharge()
     {
-        chargeTime += Time.deltaTime;
+        if (fullChargeAtkCheck || chargeAtkCheck)
+        {
+            chargeTime += Time.deltaTime;
+
+            if (chargeTime >= fullChargeAtk && fullChargeAtkCheck)
+            {
+                Instantiate(chargeP, transform);
+                fullChargeAtkCheck = false;
+            }
+            else if (chargeTime >= chargeAtk && chargeAtkCheck)
+            {
+                Instantiate(chargeP, transform);
+                chargeAtkCheck = false;
+            }
+        }
     }
 
     // 차지 시간에 따른 공격
     protected virtual void Attack()
     {
         speed = 0;
+
         if (chargeTime >= fullChargeAtk)
         {
             FullCAttack();
@@ -371,6 +384,7 @@ public class Player : MonoBehaviour
     {
         // 피격 애니메이션 재생
         anim.SetTrigger("doHit");
+        Instantiate(bloody, transform.position, Quaternion.identity);
 
         // 플레이어의 HP에서 데미지만큼 감소
         Managers.Data.PlayerLife -= damage;
@@ -399,6 +413,11 @@ public class Player : MonoBehaviour
     public void EventSetAliveTimeScale()
     {
         Time.timeScale = 1;
+    }
+    public void EventSetChargeBool()
+    {
+        fullChargeAtkCheck = true;
+        chargeAtkCheck = true;
     }
 
     // 충돌
@@ -437,7 +456,6 @@ public class Player : MonoBehaviour
             Managers.Data._onElevator = true;
             // 충돌한 오브젝트는 비활성화
             collision.gameObject.SetActive(false);
-            Debug.Log("아이템 획득");
         }
     }
 
@@ -447,12 +465,19 @@ public class Player : MonoBehaviour
         {
             targets.Add(collision.gameObject);
         }
-        
+        else if (collision.gameObject.CompareTag("Breakable"))
+        {
+            targets.Add(collision.gameObject);
+        }
     }
 
     protected virtual void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Enemy"))
+        {
+            targets.Remove(collision.gameObject);
+        }
+        else if (collision.gameObject.CompareTag("Breakable"))
         {
             targets.Remove(collision.gameObject);
         }

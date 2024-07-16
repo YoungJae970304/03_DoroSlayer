@@ -12,12 +12,10 @@ public enum EnemyState
     Dead
 }
 
-public class Enemy : MonoBehaviour
+public class Enemy : InteractiveOb
 {
     // 몬스터 스탯 변수
     protected int atk = 1;
-    protected int life = 5;
-    protected int maxLife = 5;
     protected float currentTime = 1.8f;
     protected float atkCooltime = 2f;
     protected float speed = 0.75f;
@@ -91,7 +89,8 @@ public class Enemy : MonoBehaviour
     {
         anim.SetTrigger("doRun");
 
-        rig2d.velocity = new Vector2(dir.x * speed, rig2d.velocity.y);
+        //rig2d.velocity = new Vector2(dir.x * speed, rig2d.velocity.y);
+        transform.Translate(new Vector2(dir.x * speed * Time.deltaTime, 0));
     }
 
     // 데미지 적용은 공격 모션에 이벤트로 처리
@@ -111,11 +110,11 @@ public class Enemy : MonoBehaviour
         
     }
 
-    public void Hit(int damage)
+    public override void Hit(int damage)
     {
+        base.Hit(damage);
         anim.SetTrigger("doHit");
-        life -= damage;
-
+        
         if ( life <= 0)
         {
             enemyState = EnemyState.Dead;

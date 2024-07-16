@@ -2,14 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Breakable : MonoBehaviour
+public class Breakable : InteractiveOb
 {
     public GameObject doro;
     float randVal;
+    
 
     private void Start()
     {
         randVal = Random.value;
+        life = 2;
     }
 
     private void OnDisable()
@@ -21,6 +23,16 @@ public class Breakable : MonoBehaviour
                 doro.transform.position = transform.position;
                 doro.SetActive(true);
             }
+        }
+    }
+
+    public override void Hit(int damage)
+    {
+        base.Hit(damage);
+
+        if (life <= 0)
+        {
+            gameObject.SetActive(false);
         }
     }
 }
