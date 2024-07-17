@@ -52,6 +52,9 @@ public class Player : MonoBehaviour
     public ParticleSystem chargeP;
     public ParticleSystem bloody;
 
+    // 게임오버
+    public GameObject overPanel, clearPanel;
+
     protected void Start()
     {
         numKey.Add(KeyCode.Alpha1);
@@ -358,7 +361,7 @@ public class Player : MonoBehaviour
     }
 
     // 사망 관련 함수
-    void Dead()
+    IEnumerator Dead()
     {
         // 사망 상태 변수 설정
         isDead = true;
@@ -366,8 +369,8 @@ public class Player : MonoBehaviour
         // 현재 사망상태에 따른 애니메이션 실행
         anim.SetBool("doDead", isDead);
         anim.SetTrigger("isDead");
-
-        Debug.Log("죽음");
+        yield return new WaitForSeconds(1f);
+        overPanel.SetActive(true);
     }
 
     IEnumerator LifeUp()
@@ -396,7 +399,7 @@ public class Player : MonoBehaviour
         // HP가 0 이하면 사망
         if (Managers.Data.PlayerLife <= 0)
         {
-            Dead();
+            StartCoroutine(Dead());
         }
     }
 
@@ -437,7 +440,7 @@ public class Player : MonoBehaviour
             {
                 isGrounded = true;
             }
-            
+
             if (collision.contacts[0].normal.x >= 0.7f)
             {
                 isGrounded = true;
@@ -448,7 +451,7 @@ public class Player : MonoBehaviour
                 isGrounded = true;
                 //jumpForceX = -3f;
             }
-            
+
         }
 
         // Item 태그를 가진 오브젝트와 충돌 시
@@ -461,6 +464,19 @@ public class Player : MonoBehaviour
             // 충돌한 오브젝트는 비활성화
             collision.gameObject.SetActive(false);
         }
+        else if (collision.gameObject.CompareTag("Finish"))
+        {
+            // 속도를 0으로 하고 획득 애니메이션 실행
+            speed = 0;
+            anim.SetTrigger("doGet");
+            StartCoroutine(GameClear());
+        }
+    }
+    IEnumerator GameClear()
+    {
+        yield return new WaitForSeconds(0.5f);
+        Time.timeScale = 0;
+        clearPanel.SetActive(true);
     }
 
     protected virtual void OnTriggerEnter2D(Collider2D collision)
