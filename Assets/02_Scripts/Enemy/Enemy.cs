@@ -121,7 +121,7 @@ public class Enemy : InteractiveOb
         }
     }
 
-    void Dead()
+    protected virtual void Dead()
     {
         anim.SetTrigger("doDead");
         rig2d.velocity = Vector2.zero;

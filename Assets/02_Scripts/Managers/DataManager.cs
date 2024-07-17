@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class DataManager
 {
+    public List<GameObject> doros;
+    public int poolSize = 4;
     public bool _onElevator = false;
 
     int life = 5;
@@ -25,11 +27,11 @@ public class DataManager
         {
             life = value;
 
-            if ( life < 0)
+            if (life < 0)
             {
                 life = 0;
             }
-            else if ( life > maxLife)
+            else if (life > maxLife)
             {
                 life = maxLife;
             }
@@ -37,7 +39,16 @@ public class DataManager
     }
 
     float gage = 100;
-    const float MaxGage = 100;
+    float maxGage = 100;
+
+    public float PlayerMaxGauge
+    {
+        get { return maxGage; }
+        set
+        {
+            maxGage = value;
+        }
+    }
 
     public float PlayerGage
     {
@@ -50,10 +61,21 @@ public class DataManager
             {
                 gage = 0;
             }
-            else if (gage > MaxGage)
+            else if (gage > maxGage)
             {
-                gage = MaxGage;
+                gage = maxGage;
             }
+        }
+    }
+
+    float upGauge = 10;
+
+    public float PlayerUpGauge
+    {
+        get { return upGauge; }
+        set
+        {
+            upGauge = value;
         }
     }
 }

@@ -7,6 +7,7 @@ using static UnityEngine.GraphicsBuffer;
 public class Boss : Enemy
 {
     public GameObject metis;
+    public GameObject finish;
     float shotAtkCooltime;
 
     private void Awake()
@@ -61,5 +62,11 @@ public class Boss : Enemy
             metis.SetActive(true);
             currentTime = 0;
         }
+    }
+
+    protected override void Dead()
+    {
+        base.Dead();
+        finish.SetActive(true);
     }
 }

@@ -73,16 +73,20 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        // 최대 속도 조절
-        Vector2 nowSpd = rig2d.velocity;
-        nowSpd.x = Mathf.Clamp(rig2d.velocity.x, -dashForce, dashForce);
-        nowSpd.y = Mathf.Clamp(rig2d.velocity.y, -jumpForceY, jumpForceY);
-        rig2d.velocity = nowSpd;
-
+        MaxSpeedControl();
         Debug.Log(Managers.Data.PlayerLife);
         Debug.Log(Managers.Data.PlayerGage);
         HandleInput();      // 키 입력에 대한 부분을 담당하는 함수
         ChangeInputKey();   // 캐릭터 태그 함수
+    }
+
+    // 최대 속도 조절
+    void MaxSpeedControl()
+    {
+        Vector2 nowSpd = rig2d.velocity;
+        nowSpd.x = Mathf.Clamp(rig2d.velocity.x, -dashForce, dashForce);
+        nowSpd.y = Mathf.Clamp(rig2d.velocity.y, -jumpForceY, jumpForceY);
+        rig2d.velocity = nowSpd;
     }
 
     protected void ChangeInputKey()

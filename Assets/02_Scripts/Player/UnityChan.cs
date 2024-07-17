@@ -13,7 +13,7 @@ public class UnityChan : Player
     {
         if (targets.Count > 0 && targets[0].gameObject.CompareTag("Enemy"))
         {
-            Managers.Data.PlayerGage += 10f;
+            Managers.Data.PlayerGage += Managers.Data.PlayerUpGauge;
 
             Instantiate(atkP, targets[0].transform.position, Quaternion.identity);
 

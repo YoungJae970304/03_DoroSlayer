@@ -31,4 +31,12 @@ public class Doro : Enemy
             }
         }
     }
+
+    protected override void Dead()
+    {
+        Spawner spawner = GameObject.Find("Spawner").GetComponent<Spawner>();
+        Managers.Data.doros.Remove(this.gameObject);
+        Managers.Data.doros.Add(this.gameObject);
+        base.Dead();
+    }
 }

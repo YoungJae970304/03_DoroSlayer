@@ -6,7 +6,6 @@ using UnityEngine;
 public class Toko : Player
 {
     public BoxCollider2D punchRange, ShootRange;
-    //List<GameObject> breakableOb = new List<GameObject>();
 
     public ParticleSystem boomP;
 
@@ -48,7 +47,7 @@ public class Toko : Player
     {
         if (targets.Count > 0)
         {
-            Managers.Data.PlayerGage += 10f;
+            Managers.Data.PlayerGage += Managers.Data.PlayerUpGauge;
 
             float dir = targets[0].transform.position.x - transform.position.x;
             targets[0].GetComponent<Rigidbody2D>().AddForce(new Vector2(dir, 0.5f) * backForce, ForceMode2D.Impulse);
