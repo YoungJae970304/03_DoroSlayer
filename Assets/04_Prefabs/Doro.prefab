@@ -340,3 +340,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   detectRange: {fileID: 2072702646826196069}
+  money: {fileID: 6256953345519992771, guid: 93c07141de80435499b58837e3848841, type: 3}
+  target: {fileID: 0}

@@ -186,7 +186,7 @@ public class Player : MonoBehaviour
             }
 
             // R키를 누르면 라이프 회복
-            if (Input.GetKeyDown(KeyCode.R))
+            if (Input.GetKeyDown(KeyCode.R) && Managers.Data.PlayerLife < Managers.Data.PlayerMaxLife)
             {
                 StartCoroutine(LifeUp());
             }
@@ -381,6 +381,7 @@ public class Player : MonoBehaviour
             anim.SetTrigger("doGet");
             yield return new WaitUntil(() => anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f);
             Managers.Data.PlayerLife++;
+            Managers.Data.hp.Push(Managers.Data.PlayerLife);
             Managers.Data.PlayerGage -= 70;
         }
     }
@@ -395,6 +396,10 @@ public class Player : MonoBehaviour
 
         // 플레이어의 HP에서 데미지만큼 감소
         Managers.Data.PlayerLife -= damage;
+        for (int i = 0; i < damage; i++)
+        {
+            Managers.Data.hp.Pop();
+        }
 
         // HP가 0 이하면 사망
         if (Managers.Data.PlayerLife <= 0)

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using TMPro;
 
 public enum EnemyState
 {
@@ -35,6 +36,11 @@ public class Enemy : InteractiveOb
     protected SpriteRenderer sr;
     public BoxCollider2D detectRange;
 
+    // 몰드
+    public GameObject money;
+    public Transform target;
+    TextMeshProUGUI moneyTxt;
+
     private void OnEnable()
     {
         rig2d = GetComponent<Rigidbody2D>();
@@ -44,6 +50,12 @@ public class Enemy : InteractiveOb
         life = maxLife;
 
         enemyState = EnemyState.Idle;
+    }
+
+    private void Start()
+    {
+        target = GameObject.Find("Canvas/Mold").transform;
+        moneyTxt = GameObject.Find("Canvas/Mold/Text").GetComponent<TextMeshProUGUI>();
     }
 
     protected virtual void Update()
@@ -115,7 +127,7 @@ public class Enemy : InteractiveOb
         base.Hit(damage);
         anim.SetTrigger("doHit");
         
-        if ( life <= 0)
+        if (life <= 0)
         {
             enemyState = EnemyState.Dead;
         }
@@ -125,6 +137,44 @@ public class Enemy : InteractiveOb
     {
         anim.SetTrigger("doDead");
         rig2d.velocity = Vector2.zero;
+        
+        
+        int randCount = Random.Range(5, 11);
+        for (int i = 0; i < randCount; i++)
+        {
+            Vector3 screenPos = Camera.main.WorldToScreenPoint(transform.position);
+            GameObject itemFx = Instantiate(money, screenPos, Quaternion.identity);
+
+            itemFx.transform.SetParent(GameObject.Find("Canvas").transform);
+            itemFx.GetComponent<ItemFx>().Explosion(screenPos, target.position, 150f);
+        }
+        UIManager uIManager = GameObject.Find("Canvas").GetComponent<UIManager>();
+        uIManager.SetMoney(Random.Range(50, 101));
+        //SetMoney2(Random.Range(50, 101));
+
+        gameObject.SetActive(false);
+    }
+    void SetMoney2(float money)
+    {
+        Managers.Data._money += money;    // 증가 이후 돈
+        StartCoroutine(Count2(Managers.Data._money, Managers.Data._money - money));  // _money - money = 증가되기 전 돈
+    }
+
+    IEnumerator Count2(float target, float current)
+    {
+        float duration = 0.5f;  // 카운팅에 걸리는 시간
+        float offset = (target - current) / duration;
+
+        while (current < target)
+        {
+            current += offset * Time.deltaTime;
+
+            moneyTxt.text = string.Format("{0:n0}", (int)current);
+            yield return null;
+        }
+
+        current = target;
+        moneyTxt.text = string.Format("{0:n0}", (int)current);
         gameObject.SetActive(false);
     }
 

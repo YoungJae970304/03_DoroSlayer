@@ -4,9 +4,13 @@ using UnityEngine;
 
 public class DataManager
 {
+    // Ä³¸¯ÅÍ HP
+    public Stack<int> hp = new Stack<int>();
     public List<GameObject> doros;
     public int poolSize = 4;
     public bool _onElevator = false;
+    
+    public float _money = 100;
 
     int life = 5;
     int maxLife = 5;
