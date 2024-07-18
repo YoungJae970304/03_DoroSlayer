@@ -26,6 +26,8 @@ public class Toko : Player
     protected override void Attack()
     {
         speed = 0;
+        isAttack = true;
+
         if (chargeTime >= chargeAtk)
         {
             ShootRange.enabled = true;

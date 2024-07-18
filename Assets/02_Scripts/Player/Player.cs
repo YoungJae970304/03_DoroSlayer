@@ -12,6 +12,9 @@ public enum PlayerClass
 
 public class Player : MonoBehaviour
 {
+    //public GameObject heart;
+    UIManager uiManager;
+
     // 이동 관련 변수
     protected float speed = 2f;     // 기본 이동속도
     protected float jumpForceY = 5f; // 점프력
@@ -28,6 +31,7 @@ public class Player : MonoBehaviour
     // 차지공격 체크
     protected bool chargeAtkCheck = true;
     protected bool fullChargeAtkCheck = true;
+    protected bool isAttack = false;
 
     // 상태 관련 변수
     protected bool isGrounded = true;   // 땅에 닿았는지 여부 ( 점프가능 여부 )
@@ -59,6 +63,8 @@ public class Player : MonoBehaviour
     {
         numKey.Add(KeyCode.Alpha1);
         numKey.Add(KeyCode.Alpha2);
+        
+        uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
     }
 
     // 오브젝트 활성화 시 초기화 해주는 작업
@@ -157,7 +163,7 @@ public class Player : MonoBehaviour
             }
 
             // 땅에 있고 S키를 누르면 숙이기
-            if (Input.GetKey(KeyCode.S) && isGrounded)
+            if (Input.GetKey(KeyCode.S) && isGrounded && !isAttack)
             {
                 Crouch();
             }
@@ -321,6 +327,7 @@ public class Player : MonoBehaviour
     protected virtual void Attack()
     {
         speed = 0;
+        isAttack = true;
 
         if (chargeTime >= fullChargeAtk)
         {
@@ -381,8 +388,11 @@ public class Player : MonoBehaviour
             anim.SetTrigger("doGet");
             yield return new WaitUntil(() => anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f);
             Managers.Data.PlayerLife++;
-            Managers.Data.hp.Push(Managers.Data.PlayerLife);
             Managers.Data.PlayerGage -= 70;
+
+            GameObject go = Instantiate(uiManager.hpOb, uiManager.hpParent.transform);
+            go.transform.position += new Vector3(50f * (Managers.Data.PlayerLife - 1), 0);
+            Managers.Data.hp.Push(go);
         }
     }
 
@@ -398,7 +408,7 @@ public class Player : MonoBehaviour
         Managers.Data.PlayerLife -= damage;
         for (int i = 0; i < damage; i++)
         {
-            Managers.Data.hp.Pop();
+            Destroy(Managers.Data.hp.Pop());
         }
 
         // HP가 0 이하면 사망
@@ -430,6 +440,7 @@ public class Player : MonoBehaviour
     {
         fullChargeAtkCheck = true;
         chargeAtkCheck = true;
+        isAttack = false;
     }
 
     // 충돌

@@ -5,7 +5,7 @@ using UnityEngine;
 public class DataManager
 {
     // Ä³¸¯ÅÍ HP
-    public Stack<int> hp = new Stack<int>();
+    public Stack<GameObject> hp = new Stack<GameObject>();
     public List<GameObject> doros;
     public int poolSize = 4;
     public bool _onElevator = false;
