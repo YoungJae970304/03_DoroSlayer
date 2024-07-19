@@ -1659,6 +1659,7 @@ GameObject:
   - component: {fileID: 462117498}
   - component: {fileID: 462117499}
   - component: {fileID: 462117500}
+  - component: {fileID: 462117501}
   m_Layer: 9
   m_Name: UnityChan
   m_TagString: Player
@@ -1883,6 +1884,41 @@ MonoBehaviour:
   clearPanel: {fileID: 312990320}
   atkRange: {fileID: 1868491187}
   atkP: {fileID: 611946140354920461, guid: bf8d4786210a95e48852b9841bbd8049, type: 3}
+--- !u!58 &462117501
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 462117492}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: -0.02, y: 0.14}
+  serializedVersion: 2
+  m_Radius: 0.05
 --- !u!1 &488469445
 GameObject:
   m_ObjectHideFlags: 0
@@ -2003,7 +2039,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 4.25766, y: -7.0734468, z: -12.393752}
+  m_LocalPosition: {x: 5.461418, y: -7.0729165, z: -12.393752}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -33051,6 +33087,7 @@ GameObject:
   - component: {fileID: 1820275684}
   - component: {fileID: 1820275683}
   - component: {fileID: 1820275686}
+  - component: {fileID: 1820275687}
   m_Layer: 9
   m_Name: Toko
   m_TagString: Player
@@ -33277,6 +33314,41 @@ MonoBehaviour:
   punchRange: {fileID: 1963222440}
   ShootRange: {fileID: 458547624}
   boomP: {fileID: 7981057179765556089, guid: 5cf235f97d732cd4084eff7374a60b69, type: 3}
+--- !u!58 &1820275687
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1820275679}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0.01, y: 0.14}
+  serializedVersion: 2
+  m_Radius: 0.05
 --- !u!1 &1868491185
 GameObject:
   m_ObjectHideFlags: 0

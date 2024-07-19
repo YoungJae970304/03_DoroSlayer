@@ -480,8 +480,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e8d2f5514af9f44faa90445ca74205b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hpOb: {fileID: 3053545099917099566, guid: 3914e42e80b5b964bb6f625dc5bdf116, type: 3}
+  hpParent: {fileID: 0}
   gauge: {fileID: 0}
   panel: {fileID: 0}
+  moneyTxt: {fileID: 0}
 --- !u!1 &323319465
 GameObject:
   m_ObjectHideFlags: 0

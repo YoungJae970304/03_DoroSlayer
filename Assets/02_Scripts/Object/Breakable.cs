@@ -17,13 +17,6 @@ public class Breakable : InteractiveOb
     {
         if (randVal < 0.5f)
         {
-            /*
-            if (doro != null)
-            {
-                doro.transform.position = transform.position;
-                doro.SetActive(true);
-            }
-            */
             if (Managers.Data.doros != null)
             {
                 Managers.Data.doros[3].transform.position = transform.position;

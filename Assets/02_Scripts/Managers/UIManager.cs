@@ -17,14 +17,17 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
-        StartCoroutine(Count(Managers.Data._money, 0));
-
-        for (int i = 0; i < Managers.Data.PlayerMaxLife; i++)
+        if (SceneManager.GetActiveScene().name != "00_Title")
         {
-            GameObject go = Instantiate(hpOb, hpParent.transform);
-            go.transform.position += new Vector3(50f * i, 0);
-            Managers.Data.hp.Push(go);
-        }
+            StartCoroutine(Count(Managers.Data._money, 0));
+
+            for (int i = 0; i < Managers.Data.PlayerMaxLife; i++)
+            {
+                GameObject go = Instantiate(hpOb, hpParent.transform);
+                go.transform.position += new Vector3(50f * i, 0);
+                Managers.Data.hp.Push(go);
+            }
+        } 
     }
 
     public void BTN_GoMainScene()
@@ -63,8 +66,15 @@ public class UIManager : MonoBehaviour
             float currentGauge = Managers.Data.PlayerGage / Managers.Data.PlayerMaxGauge;
             gauge.fillAmount = Mathf.Lerp(gauge.fillAmount, currentGauge, 0.01f);
         }
-    }
 
+        if (SceneManager.GetActiveScene().name != "00_Title")
+        {
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                OpenOverPanel();
+            }
+        }
+    }
     public void SetMoney(float money)
     {
         Managers.Data._money += money;    // Áõ°¡ ÀÌÈÄ µ·
