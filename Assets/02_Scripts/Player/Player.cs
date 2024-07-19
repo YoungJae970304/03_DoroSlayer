@@ -52,6 +52,8 @@ public class Player : MonoBehaviour
     protected SpriteRenderer sr;
     protected BoxCollider2D boxCol;
 
+    public CircleCollider2D topCol;
+
     // 파티클
     public ParticleSystem chargeP;
     public ParticleSystem bloody;
@@ -236,6 +238,7 @@ public class Player : MonoBehaviour
     {
         anim.SetFloat("doRun", Mathf.Abs(moveInput));
         boxCol.enabled = true;
+        topCol.enabled = true;
     }
 
     // 숙이기
@@ -249,6 +252,7 @@ public class Player : MonoBehaviour
 
         // 피격에 관련된 콜라이더를 비활성화
         boxCol.enabled = false;
+        topCol.enabled = false;
     }
 
     // 점프
