@@ -12,6 +12,7 @@ public class UIManager : MonoBehaviour
 
     public Image gauge;
     public GameObject panel;
+    public GameObject minimap;
 
     public TextMeshProUGUI moneyTxt;
 
@@ -72,6 +73,14 @@ public class UIManager : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 OpenOverPanel();
+            }
+        }
+
+        if (minimap != null)
+        {
+            if (Input.GetKeyDown(KeyCode.Tab))
+            {
+                minimap.SetActive(!minimap.activeSelf);
             }
         }
     }

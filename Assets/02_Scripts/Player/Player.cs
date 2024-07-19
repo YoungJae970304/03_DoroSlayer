@@ -380,7 +380,7 @@ public class Player : MonoBehaviour
         // 현재 사망상태에 따른 애니메이션 실행
         anim.SetBool("doDead", isDead);
         anim.SetTrigger("isDead");
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.5f);
         overPanel.SetActive(true);
     }
 
@@ -395,7 +395,7 @@ public class Player : MonoBehaviour
             Managers.Data.PlayerGage -= 70;
 
             GameObject go = Instantiate(uiManager.hpOb, uiManager.hpParent.transform);
-            go.transform.position += new Vector3(50f * (Managers.Data.PlayerLife - 1), 0);
+            go.transform.position += new Vector3(100f * (Managers.Data.PlayerLife - 1), 0);
             Managers.Data.hp.Push(go);
         }
     }

@@ -18,15 +18,15 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
+  - MainCamera
+  - MinimapCamera
   - Ground
   - Player
   - Enemy
   - PlayerRange
   - EnemyRange
   - Bullet
-  - 
+  - Object
   - 
   - 
   - 

@@ -66,24 +66,4 @@ public class Toko : Player
         }
         EventTokoAtkEnemy(damage);
     }
-
-    /*
-    protected override void OnTriggerEnter2D(Collider2D collision)
-    {
-        base.OnTriggerEnter2D(collision);
-        if (collision.gameObject.CompareTag("Breakable"))
-        {
-            targets.Add(collision.gameObject);
-        }
-    }
-
-    protected override void OnTriggerExit2D(Collider2D collision)
-    {
-        base.OnTriggerExit2D(collision);
-        if (collision.gameObject.CompareTag("Breakable"))
-        {
-            targets.Remove(collision.gameObject);
-        }
-    }
-    */
 }
