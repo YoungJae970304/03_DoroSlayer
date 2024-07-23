@@ -85,8 +85,6 @@ public class Player : MonoBehaviour
     private void Update()
     {
         MaxSpeedControl();
-        Debug.Log(Managers.Data.PlayerLife);
-        Debug.Log(Managers.Data.PlayerGage);
         HandleInput();      // 키 입력에 대한 부분을 담당하는 함수
         ChangeInputKey();   // 캐릭터 태그 함수
     }
@@ -100,7 +98,7 @@ public class Player : MonoBehaviour
         rig2d.velocity = nowSpd;
     }
 
-    protected void ChangeInputKey()
+    void ChangeInputKey()
     {
         // 게이지가 일정 이상일때만 동작되도록 설정
         if ( !isDead && Managers.Data.PlayerGage >= 30f )
