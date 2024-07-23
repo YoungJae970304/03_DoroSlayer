@@ -395,7 +395,7 @@ public class Player : MonoBehaviour
             Managers.Data.PlayerGage -= 70;
 
             GameObject go = Instantiate(uiManager.hpOb, uiManager.hpParent.transform);
-            go.transform.position += new Vector3(100f * (Managers.Data.PlayerLife - 1), 0);
+            go.transform.position += new Vector3(50f * (Managers.Data.PlayerLife - 1), 0);
             Managers.Data.hp.Push(go);
         }
     }

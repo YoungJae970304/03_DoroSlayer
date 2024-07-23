@@ -13,14 +13,19 @@ public class Elevator : MonoBehaviour
     {
         if (Managers.Data._onElevator && upEleva)
         {
-            transform.position = Vector3.MoveTowards(gameObject.transform.position, upTarget.transform.position, Time.deltaTime * speed);
+            transform.position = Vector3.MoveTowards(
+                gameObject.transform.position, 
+                upTarget.transform.position, 
+                Time.deltaTime * speed);
         }
         else
         {
-            transform.position = Vector3.MoveTowards(gameObject.transform.position, downTarget.transform.position, Time.deltaTime * speed);
+            transform.position = Vector3.MoveTowards(
+                gameObject.transform.position, 
+                downTarget.transform.position, 
+                Time.deltaTime * speed);
         }
     }
-
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
@@ -29,7 +34,6 @@ public class Elevator : MonoBehaviour
             collision.transform.SetParent(transform);
         }
     }
-
     private void OnCollisionExit2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))

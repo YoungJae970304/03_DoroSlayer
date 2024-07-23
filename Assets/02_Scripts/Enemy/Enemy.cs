@@ -101,7 +101,6 @@ public class Enemy : InteractiveOb
     {
         anim.SetTrigger("doRun");
 
-        //rig2d.velocity = new Vector2(dir.x * speed, rig2d.velocity.y);
         transform.Translate(new Vector2(dir.x * speed * Time.deltaTime, 0));
     }
 
@@ -132,12 +131,10 @@ public class Enemy : InteractiveOb
             enemyState = EnemyState.Dead;
         }
     }
-
     protected virtual void Dead()
     {
         anim.SetTrigger("doDead");
         rig2d.velocity = Vector2.zero;
-        
         
         int randCount = Random.Range(5, 11);
         for (int i = 0; i < randCount; i++)
@@ -150,31 +147,6 @@ public class Enemy : InteractiveOb
         }
         UIManager uIManager = GameObject.Find("Canvas").GetComponent<UIManager>();
         uIManager.SetMoney(Random.Range(50, 101));
-        //SetMoney2(Random.Range(50, 101));
-
-        gameObject.SetActive(false);
-    }
-    void SetMoney2(float money)
-    {
-        Managers.Data._money += money;    // 증가 이후 돈
-        StartCoroutine(Count2(Managers.Data._money, Managers.Data._money - money));  // _money - money = 증가되기 전 돈
-    }
-
-    IEnumerator Count2(float target, float current)
-    {
-        float duration = 0.5f;  // 카운팅에 걸리는 시간
-        float offset = (target - current) / duration;
-
-        while (current < target)
-        {
-            current += offset * Time.deltaTime;
-
-            moneyTxt.text = string.Format("{0:n0}", (int)current);
-            yield return null;
-        }
-
-        current = target;
-        moneyTxt.text = string.Format("{0:n0}", (int)current);
         gameObject.SetActive(false);
     }
 
@@ -210,8 +182,6 @@ public class Enemy : InteractiveOb
             targets.Add( collision.gameObject );
         }
     }
-
-    
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))

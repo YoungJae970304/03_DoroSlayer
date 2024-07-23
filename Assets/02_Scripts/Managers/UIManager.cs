@@ -25,7 +25,7 @@ public class UIManager : MonoBehaviour
             for (int i = 0; i < Managers.Data.PlayerMaxLife; i++)
             {
                 GameObject go = Instantiate(hpOb, hpParent.transform);
-                go.transform.position += new Vector3(100f * i, 0);
+                go.transform.position += new Vector3(50f * i, 0);
                 Managers.Data.hp.Push(go);
             }
         } 
